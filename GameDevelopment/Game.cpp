@@ -4,17 +4,13 @@
 
 #include "pch.h"
 #include "Game.h"
-#include <SpriteFont.h>
+#include <sstream>
 
 extern void ExitGame();
 
 using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
-
-std::unique_ptr<SpriteBatch> spriteBatch;
-std::unique_ptr<SpriteFont> spriteFont;
-
 
 Game::Game() :
     m_window(0),
@@ -45,6 +41,7 @@ void Game::Initialize(HWND window, int width, int height)
 	spriteBatch = std::make_unique<SpriteBatch>(m_d3dContext.Get());
 	spriteFont = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"myfile.spritefont");
 
+	counter = 0;
 }
 
 // Executes the basic game loop.
@@ -65,6 +62,14 @@ void Game::Update(DX::StepTimer const& timer)
 
     // TODO: Add your game logic here.
     elapsedTime;
+	counter++;
+
+	// 入出力を文字列に対して行うstringstream
+	std::wstringstream ss;
+	// 文字列に数値を埋め込む
+	ss << L"Hello" << counter << "World!";
+	// 埋め込み後の文字列を取得
+	str = ss.str();
 }
 
 // Draws the scene.
@@ -79,8 +84,11 @@ void Game::Render()
     Clear();
 
     // TODO: Add your rendering code here.
+	// 文字列の画面表示
 	spriteBatch->Begin();
-	spriteFont->DrawString(spriteBatch.get(), L"Hello, world!", XMFLOAT2(10, 10));
+	spriteFont->DrawString(spriteBatch.get(), str.c_str(), XMFLOAT2(10, 10));
+	spriteFont->DrawString(spriteBatch.get(), L"I'm a human", XMFLOAT2(10, 300));
+	spriteFont->DrawString(spriteBatch.get(), str.c_str(), XMFLOAT2(600, 500));
 	spriteBatch->End();
 
     Present();
