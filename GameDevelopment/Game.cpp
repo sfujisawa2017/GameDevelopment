@@ -1,4 +1,4 @@
-//
+ï»¿//
 // Game.cpp
 //
 
@@ -18,6 +18,7 @@ Game::Game() :
     m_outputHeight(600),
     m_featureLevel(D3D_FEATURE_LEVEL_9_1)
 {
+
 }
 
 // Initialize the Direct3D resources required to run.
@@ -37,11 +38,10 @@ void Game::Initialize(HWND window, int width, int height)
     m_timer.SetFixedTimeStep(true);
     m_timer.SetTargetElapsedSeconds(1.0 / 60);
     */
-
+	// ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆãƒãƒƒãƒã‚’ä½œæˆ
 	spriteBatch = std::make_unique<SpriteBatch>(m_d3dContext.Get());
-	spriteFont = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"myfile.spritefont");
-
-	counter = 0;
+	// ãƒ‡ãƒãƒƒã‚°ãƒ†ã‚­ã‚¹ãƒˆã‚’ä½œæˆ
+	debugText = std::make_unique<DebugText>(m_d3dDevice.Get(), spriteBatch.get());
 }
 
 // Executes the basic game loop.
@@ -62,14 +62,13 @@ void Game::Update(DX::StepTimer const& timer)
 
     // TODO: Add your game logic here.
     elapsedTime;
-	counter++;
 
-	// “üo—Í‚ğ•¶š—ñ‚É‘Î‚µ‚Äs‚¤stringstream
-	std::wstringstream ss;
-	// •¶š—ñ‚É”’l‚ğ–„‚ß‚Ş
-	ss << L"Hello" << counter << "World!";
-	// –„‚ß‚İŒã‚Ì•¶š—ñ‚ğæ“¾
-	str = ss.str();
+	// ãƒ†ã‚­ã‚¹ãƒˆã‚’è¿½åŠ 
+	debugText->AddText(SimpleMath::Vector2(10, 100), L"Hey yo!");
+	// æ•´æ•°ã®åŸ‹ã‚è¾¼ã¿
+	debugText->AddText(SimpleMath::Vector2(10, 200), L"Hello, %d World!", 5);
+	// æµ®å‹•å°æ•°ã®åŸ‹ã‚è¾¼ã¿
+	debugText->AddText(SimpleMath::Vector2(10, 300), L"Hello, %f World!", 1.0f);
 }
 
 // Draws the scene.
@@ -84,11 +83,9 @@ void Game::Render()
     Clear();
 
     // TODO: Add your rendering code here.
-	// •¶š—ñ‚Ì‰æ–Ê•\¦
+	// æ–‡å­—åˆ—ã®ç”»é¢è¡¨ç¤º
 	spriteBatch->Begin();
-	spriteFont->DrawString(spriteBatch.get(), str.c_str(), XMFLOAT2(10, 10));
-	spriteFont->DrawString(spriteBatch.get(), L"I'm a human", XMFLOAT2(10, 300));
-	spriteFont->DrawString(spriteBatch.get(), str.c_str(), XMFLOAT2(600, 500));
+	debugText->Draw();
 	spriteBatch->End();
 
     Present();

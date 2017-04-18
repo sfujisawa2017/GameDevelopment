@@ -1,11 +1,11 @@
-//
+﻿//
 // Game.h
 //
 
 #pragma once
 
 #include "StepTimer.h"
-#include <SpriteFont.h>
+#include "DebugText.h"
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -64,7 +64,5 @@ private:
     DX::StepTimer                                   m_timer;
 
 	std::unique_ptr<DirectX::SpriteBatch> spriteBatch;
-	std::unique_ptr<DirectX::SpriteFont> spriteFont;
-	std::wstring str;
-	int counter;
+	std::unique_ptr<DebugText> debugText;
 };
