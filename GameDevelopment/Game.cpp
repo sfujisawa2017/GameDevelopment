@@ -4,12 +4,17 @@
 
 #include "pch.h"
 #include "Game.h"
+#include <SpriteFont.h>
 
 extern void ExitGame();
 
 using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
+
+std::unique_ptr<SpriteBatch> spriteBatch;
+std::unique_ptr<SpriteFont> spriteFont;
+
 
 Game::Game() :
     m_window(0),
@@ -36,6 +41,10 @@ void Game::Initialize(HWND window, int width, int height)
     m_timer.SetFixedTimeStep(true);
     m_timer.SetTargetElapsedSeconds(1.0 / 60);
     */
+
+	spriteBatch = std::make_unique<SpriteBatch>(m_d3dContext.Get());
+	spriteFont = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"myfile.spritefont");
+
 }
 
 // Executes the basic game loop.
@@ -70,6 +79,9 @@ void Game::Render()
     Clear();
 
     // TODO: Add your rendering code here.
+	spriteBatch->Begin();
+	spriteFont->DrawString(spriteBatch.get(), L"Hello, world!", XMFLOAT2(10, 10));
+	spriteBatch->End();
 
     Present();
 }
