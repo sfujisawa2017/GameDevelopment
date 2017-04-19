@@ -7,6 +7,7 @@
 #include "StepTimer.h"
 #include "DebugText.h"
 #include <CommonStates.h>
+#include <Keyboard.h>
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -67,6 +68,10 @@ private:
 	std::unique_ptr<DirectX::CommonStates> m_states;
 	std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
 	std::unique_ptr<DebugText> debugText;
+
+	std::unique_ptr<DirectX::Keyboard> m_Keyboard;
+	DirectX::Keyboard::KeyboardStateTracker m_KeyboardTracker;
+
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texture;
 

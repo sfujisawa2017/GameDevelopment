@@ -70,6 +70,8 @@ void Game::Initialize(HWND window, int width, int height)
 	// スプライトの表示位置を指定
 	m_screenPos.x = 100.0f;
 	m_screenPos.y = 100.0f;
+
+	m_Keyboard = std::make_unique<Keyboard>();
 }
 
 // Executes the basic game loop.
@@ -97,6 +99,31 @@ void Game::Update(DX::StepTimer const& timer)
 	debugText->AddText(SimpleMath::Vector2(10, 200), L"Hello, %d World!", 5);
 	// 浮動小数の埋め込み
 	debugText->AddText(SimpleMath::Vector2(10, 300), L"Hello, %f World!", 1.0f);
+
+	// キーボードステート
+	Keyboard::State kb = m_Keyboard->GetState();
+	m_KeyboardTracker.Update(kb);
+
+	if (m_KeyboardTracker.pressed.Left)
+	{
+		debugText->AddText(SimpleMath::Vector2(10, 400), L"Left Key is Pushed", 1.0f);
+	}
+
+	if (kb.Right)
+	{
+		debugText->AddText(SimpleMath::Vector2(10, 400), L"Right Key is Pushed", 1.0f);
+	}
+
+	if (kb.Up)
+	{
+		debugText->AddText(SimpleMath::Vector2(10, 400), L"Up Key is Pushed", 1.0f);
+	}
+
+	if (kb.Down)
+	{
+		debugText->AddText(SimpleMath::Vector2(10, 400), L"Down Key is Pushed", 1.0f);
+	}
+
 }
 
 // Draws the scene.
