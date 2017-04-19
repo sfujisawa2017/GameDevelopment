@@ -31,4 +31,12 @@
       <Filter>Assets</Filter>
     </Manifest>
   </ItemGroup>
+  <ItemGroup>
+    <ImageContentTask Include="Assets\pikatyu_s.png">
+      <Filter>Assets</Filter>
+    </ImageContentTask>
+    <ImageContentTask Include="Assets\cat.png">
+      <Filter>Assets</Filter>
+    </ImageContentTask>
+  </ItemGroup>
 </Project>

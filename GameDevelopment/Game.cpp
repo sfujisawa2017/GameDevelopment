@@ -6,6 +6,7 @@
 #include "Game.h"
 #include <sstream>
 #include <WICTextureLoader.h>
+#include <DDSTextureLoader.h>
 
 extern void ExitGame();
 
@@ -40,6 +41,8 @@ void Game::Initialize(HWND window, int width, int height)
     m_timer.SetFixedTimeStep(true);
     m_timer.SetTargetElapsedSeconds(1.0 / 60);
     */
+	// 描画ステートを作成
+	m_states = std::make_unique<CommonStates>(m_d3dDevice.Get());
 	// スプライトバッチを作成
 	m_spriteBatch = std::make_unique<SpriteBatch>(m_d3dContext.Get());
 	// デバッグテキストを作成
@@ -47,8 +50,12 @@ void Game::Initialize(HWND window, int width, int height)
 
 	// テクスチャファイルをロード
 	ComPtr<ID3D11Resource> resource;
+	//DX::ThrowIfFailed(
+	//	CreateWICTextureFromFile(m_d3dDevice.Get(), L"Assets/pikatyu_s.png",
+	//		resource.GetAddressOf(),
+	//		m_texture.ReleaseAndGetAddressOf()));
 	DX::ThrowIfFailed(
-		CreateWICTextureFromFile(m_d3dDevice.Get(), L"Resources/cat.png",
+		CreateDDSTextureFromFile(m_d3dDevice.Get(), L"Resources/pikatyu_s.dds",
 			resource.GetAddressOf(),
 			m_texture.ReleaseAndGetAddressOf()));
 	// リソースをテクスチャ2Dに変換
@@ -107,7 +114,11 @@ void Game::Render()
 	// スプライトの描画
 	m_spriteBatch->Begin();
 	m_spriteBatch->Draw(m_texture.Get(), m_screenPos, nullptr, Colors::White,
-		XM_PI, m_origin, Vector2(2.0f,2.0f));
+		XM_PI, m_origin, Vector2(1.0f,1.0f));
+	m_spriteBatch->End();
+
+	// デバッグ用文字表示
+	m_spriteBatch->Begin(SpriteSortMode_Deferred, m_states->Opaque());
 	debugText->Draw();
 	m_spriteBatch->End();
 
