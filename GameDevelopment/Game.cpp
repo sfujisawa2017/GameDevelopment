@@ -5,10 +5,12 @@
 #include "pch.h"
 #include "Game.h"
 #include <sstream>
+#include <WICTextureLoader.h>
 
 extern void ExitGame();
 
 using namespace DirectX;
+using namespace DirectX::SimpleMath;
 
 using Microsoft::WRL::ComPtr;
 
@@ -39,9 +41,28 @@ void Game::Initialize(HWND window, int width, int height)
     m_timer.SetTargetElapsedSeconds(1.0 / 60);
     */
 	// スプライトバッチを作成
-	spriteBatch = std::make_unique<SpriteBatch>(m_d3dContext.Get());
+	m_spriteBatch = std::make_unique<SpriteBatch>(m_d3dContext.Get());
 	// デバッグテキストを作成
-	debugText = std::make_unique<DebugText>(m_d3dDevice.Get(), spriteBatch.get());
+	debugText = std::make_unique<DebugText>(m_d3dDevice.Get(), m_spriteBatch.get());
+
+	// テクスチャファイルをロード
+	ComPtr<ID3D11Resource> resource;
+	DX::ThrowIfFailed(
+		CreateWICTextureFromFile(m_d3dDevice.Get(), L"Resources/cat.png",
+			resource.GetAddressOf(),
+			m_texture.ReleaseAndGetAddressOf()));
+	// リソースをテクスチャ2Dに変換
+	ComPtr<ID3D11Texture2D> cat;
+	DX::ThrowIfFailed(resource.As(&cat));
+	// 読み込んだテクスチャの情報を取得
+	CD3D11_TEXTURE2D_DESC catDesc;
+	cat->GetDesc(&catDesc);
+	// スプライトの回転中心を指定
+	m_origin.x = float(catDesc.Width / 2);
+	m_origin.y = float(catDesc.Height / 2);
+	// スプライトの表示位置を指定
+	m_screenPos.x = 100.0f;
+	m_screenPos.y = 100.0f;
 }
 
 // Executes the basic game loop.
@@ -83,10 +104,12 @@ void Game::Render()
     Clear();
 
     // TODO: Add your rendering code here.
-	// 文字列の画面表示
-	spriteBatch->Begin();
+	// スプライトの描画
+	m_spriteBatch->Begin();
+	m_spriteBatch->Draw(m_texture.Get(), m_screenPos, nullptr, Colors::White,
+		XM_PI, m_origin, Vector2(2.0f,2.0f));
 	debugText->Draw();
-	spriteBatch->End();
+	m_spriteBatch->End();
 
     Present();
 }
