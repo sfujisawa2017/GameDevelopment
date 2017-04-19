@@ -70,8 +70,8 @@ void Game::Initialize(HWND window, int width, int height)
 	// スプライトの表示位置を指定
 	m_screenPos.x = 100.0f;
 	m_screenPos.y = 100.0f;
-
-	m_Keyboard = std::make_unique<Keyboard>();
+	// キーボードユーティリティ作成
+	keyboardUtil = std::make_unique<KeyboardUtil>();
 }
 
 // Executes the basic game loop.
@@ -100,28 +100,47 @@ void Game::Update(DX::StepTimer const& timer)
 	// 浮動小数の埋め込み
 	debugText->AddText(SimpleMath::Vector2(10, 300), L"Hello, %f World!", 1.0f);
 
-	// キーボードステート
-	Keyboard::State kb = m_Keyboard->GetState();
-	m_KeyboardTracker.Update(kb);
+	// キーボード更新
+	keyboardUtil->Update();
 
-	if (m_KeyboardTracker.pressed.Left)
+	if (keyboardUtil->IsPressed(Keyboard::Left))
 	{
 		debugText->AddText(SimpleMath::Vector2(10, 400), L"Left Key is Pushed", 1.0f);
 	}
 
-	if (kb.Right)
+	if (keyboardUtil->IsPressed(Keyboard::Right))
 	{
 		debugText->AddText(SimpleMath::Vector2(10, 400), L"Right Key is Pushed", 1.0f);
 	}
 
-	if (kb.Up)
+	if (keyboardUtil->IsPressed(Keyboard::Up))
 	{
 		debugText->AddText(SimpleMath::Vector2(10, 400), L"Up Key is Pushed", 1.0f);
 	}
 
-	if (kb.Down)
+	if (keyboardUtil->IsPressed(Keyboard::Down))
 	{
 		debugText->AddText(SimpleMath::Vector2(10, 400), L"Down Key is Pushed", 1.0f);
+	}
+
+	if (keyboardUtil->IsTriggered(Keyboard::Left))
+	{
+		debugText->AddText(SimpleMath::Vector2(10, 500), L"Left Key is Triggerd", 1.0f);
+	}
+
+	if (keyboardUtil->IsTriggered(Keyboard::Right))
+	{
+		debugText->AddText(SimpleMath::Vector2(10, 500), L"Right Key is Triggerd", 1.0f);
+	}
+
+	if (keyboardUtil->IsTriggered(Keyboard::Up))
+	{
+		debugText->AddText(SimpleMath::Vector2(10, 500), L"Up Key is Triggerd", 1.0f);
+	}
+
+	if (keyboardUtil->IsTriggered(Keyboard::Down))
+	{
+		debugText->AddText(SimpleMath::Vector2(10, 500), L"Down Key is Triggerd", 1.0f);
 	}
 
 }
