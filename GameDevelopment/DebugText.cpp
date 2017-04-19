@@ -6,10 +6,18 @@ DebugText::DebugText(ID3D11Device* d3dDevice, DirectX::SpriteBatch* spriteBatch)
 {
 	this->d3dDevice = d3dDevice;
 	this->spriteBatch = spriteBatch;
+	// ComPtrの参照カウントを増やす
+	d3dDevice->AddRef();
 
 	// フォントファイルの読み込み
 	spriteFont = std::make_unique<SpriteFont>(d3dDevice, L"myfile.spritefont");
 
+}
+
+DebugText::~DebugText()
+{
+	// ComPtrの参照カウントを減らす
+	d3dDevice->Release();
 }
 
 void DebugText::Draw()

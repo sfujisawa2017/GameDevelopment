@@ -20,6 +20,8 @@ public:
 
 	// コンストラクタ
 	DebugText(ID3D11Device*	d3dDevice, DirectX::SpriteBatch* spriteBatch);
+	// デストラクタ
+	virtual ~DebugText();
 	// 描画
 	// ※必ずSpriteBatchのBegin()とEnd()の間で呼び出すこと。
 	void Draw();
