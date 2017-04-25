@@ -158,7 +158,7 @@ void Game::Render()
 
     // TODO: Add your rendering code here.
 	// スプライトの描画
-	m_spriteBatch->Begin();
+	m_spriteBatch->Begin(SpriteSortMode_Deferred, m_states->AlphaBlend());
 	m_spriteBatch->Draw(m_texture.Get(), m_screenPos, nullptr, Colors::White,
 		XM_PI, m_origin, Vector2(1.0f,1.0f));
 	m_spriteBatch->End();

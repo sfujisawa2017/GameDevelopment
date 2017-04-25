@@ -101,6 +101,8 @@
     </Link>
     <ImageContentTask>
       <ContentOutput>Resources\%(Filename).dds</ContentOutput>
+      <Compress>BC7_UNORM</Compress>
+      <GeneratePremultipliedAlpha>true</GeneratePremultipliedAlpha>
     </ImageContentTask>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
