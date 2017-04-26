@@ -72,6 +72,9 @@ void Game::Initialize(HWND window, int width, int height)
 	m_screenPos.y = 100.0f;
 	// キーボードユーティリティ作成
 	keyboardUtil = std::make_unique<KeyboardUtil>();
+
+	// マウスオブジェクト作成
+	mouseUtil = std::make_unique<MouseUtil>(window);
 }
 
 // Executes the basic game loop.
@@ -93,56 +96,65 @@ void Game::Update(DX::StepTimer const& timer)
     // TODO: Add your game logic here.
     elapsedTime;
 
-	// テキストを追加
-	debugText->AddText(SimpleMath::Vector2(10, 100), L"Hey yo!");
-	// 整数の埋め込み
-	debugText->AddText(SimpleMath::Vector2(10, 200), L"Hello, %d World!", 5);
-	// 浮動小数の埋め込み
-	debugText->AddText(SimpleMath::Vector2(10, 300), L"Hello, %f World!", 1.0f);
-
 	// キーボード更新
 	keyboardUtil->Update();
+	// マウス更新
+	mouseUtil->Update();
 
-	if (keyboardUtil->IsPressed(Keyboard::Left))
+	// ホイールクリック中は相対、それ以外なら絶対座標モードをセット
+	if (mouseUtil->IsPressed(MouseUtil::Button::Middle))
 	{
-		debugText->AddText(SimpleMath::Vector2(10, 400), L"Left Key is Pushed", 1.0f);
+		mouseUtil->SetMode(Mouse::Mode::MODE_RELATIVE);
+	}
+	else
+	{
+		mouseUtil->SetMode(Mouse::Mode::MODE_ABSOLUTE);
 	}
 
-	if (keyboardUtil->IsPressed(Keyboard::Right))
+	// マウスモードの表示
+	if (mouseUtil->GetMode() == DirectX::Mouse::Mode::MODE_ABSOLUTE)
 	{
-		debugText->AddText(SimpleMath::Vector2(10, 400), L"Right Key is Pushed", 1.0f);
+		debugText->AddText(SimpleMath::Vector2(10, 100), L"Mouse Mode: Absolute");
+	}
+	else
+	{
+		debugText->AddText(SimpleMath::Vector2(10, 100), L"Mouse Mode: Relative");
 	}
 
-	if (keyboardUtil->IsPressed(Keyboard::Up))
+	// マウス座標の表示
+	XMINT2 mousePos = mouseUtil->GetPos();
+	debugText->AddText(SimpleMath::Vector2(10, 200), L"Mouse X:%03d Y:%03d", mousePos.x, mousePos.y);
+
+	// マウスボタン状態を表示
+	if (mouseUtil->IsPressed(MouseUtil::Button::Left))
 	{
-		debugText->AddText(SimpleMath::Vector2(10, 400), L"Up Key is Pushed", 1.0f);
+		debugText->AddText(SimpleMath::Vector2(10, 400), L"Left Button is Pushed", 1.0f);
 	}
 
-	if (keyboardUtil->IsPressed(Keyboard::Down))
+	if (mouseUtil->IsPressed(MouseUtil::Button::Middle))
 	{
-		debugText->AddText(SimpleMath::Vector2(10, 400), L"Down Key is Pushed", 1.0f);
+		debugText->AddText(SimpleMath::Vector2(10, 400), L"Middle Button is Pushed", 1.0f);
 	}
 
-	if (keyboardUtil->IsTriggered(Keyboard::Left))
+	if (mouseUtil->IsPressed(MouseUtil::Button::Right))
 	{
-		debugText->AddText(SimpleMath::Vector2(10, 500), L"Left Key is Triggerd", 1.0f);
+		debugText->AddText(SimpleMath::Vector2(10, 400), L"Right Button is Pushed", 1.0f);
 	}
 
-	if (keyboardUtil->IsTriggered(Keyboard::Right))
+	if (mouseUtil->IsTriggered(MouseUtil::Button::Left))
 	{
-		debugText->AddText(SimpleMath::Vector2(10, 500), L"Right Key is Triggerd", 1.0f);
+		debugText->AddText(SimpleMath::Vector2(10, 500), L"Left Button is Triggerd", 1.0f);
 	}
 
-	if (keyboardUtil->IsTriggered(Keyboard::Up))
+	if (mouseUtil->IsTriggered(MouseUtil::Button::Middle))
 	{
-		debugText->AddText(SimpleMath::Vector2(10, 500), L"Up Key is Triggerd", 1.0f);
+		debugText->AddText(SimpleMath::Vector2(10, 500), L"Middle Button is Triggerd", 1.0f);
 	}
 
-	if (keyboardUtil->IsTriggered(Keyboard::Down))
+	if (mouseUtil->IsTriggered(MouseUtil::Button::Right))
 	{
-		debugText->AddText(SimpleMath::Vector2(10, 500), L"Down Key is Triggerd", 1.0f);
+		debugText->AddText(SimpleMath::Vector2(10, 500), L"Right Button is Triggerd", 1.0f);
 	}
-
 }
 
 // Draws the scene.
@@ -160,7 +172,7 @@ void Game::Render()
 	// スプライトの描画
 	m_spriteBatch->Begin(SpriteSortMode_Deferred, m_states->AlphaBlend());
 	m_spriteBatch->Draw(m_texture.Get(), m_screenPos, nullptr, Colors::White,
-		XM_PI, m_origin, Vector2(1.0f,1.0f));
+		XM_PI, m_origin, 1.0f);
 	m_spriteBatch->End();
 
 	// デバッグ用文字表示

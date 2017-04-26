@@ -5,9 +5,11 @@
 #pragma once
 
 #include <CommonStates.h>
+#include <Mouse.h>
 #include "StepTimer.h"
 #include "DebugText.h"
 #include "KeyboardUtil.h"
+#include "MouseUtil.h"
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -69,6 +71,7 @@ private:
 	std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
 	std::unique_ptr<DebugText> debugText;
 	std::unique_ptr<KeyboardUtil> keyboardUtil;
+	std::unique_ptr<MouseUtil> mouseUtil;
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texture;
 
