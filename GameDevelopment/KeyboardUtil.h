@@ -6,17 +6,18 @@
 // キーボードユーティリティクラス
 class KeyboardUtil
 {
+	using Keys = DirectX::Keyboard::Keys;
 public:
 	// コンストラクタ
 	KeyboardUtil();
 	// 毎フレーム更新
 	void Update();
 	// 指定キーが押されているか
-	bool IsPressed(DirectX::Keyboard::Keys key);
+	bool IsPressed(Keys key);
 	// 指定キーのトリガーチェック
-	bool IsTriggered(DirectX::Keyboard::Keys key);
+	bool IsTriggered(Keys key);
 	// 指定キーのリリースチェック
-	bool IsReleased(DirectX::Keyboard::Keys key);
+	bool IsReleased(Keys key);
 protected:
 	// キーボード
 	std::unique_ptr<DirectX::Keyboard> m_Keyboard;
