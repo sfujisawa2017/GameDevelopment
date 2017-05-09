@@ -7,6 +7,7 @@
 #include <sstream>
 #include <WICTextureLoader.h>
 #include <DDSTextureLoader.h>
+#include "Resources\Basic.h"
 
 extern void ExitGame();
 
@@ -22,6 +23,11 @@ Game::Game() :
     m_featureLevel(D3D_FEATURE_LEVEL_9_1)
 {
 
+}
+
+Game::~Game()
+{
+	ADX2Le::Finalize();
 }
 
 // Initialize the Direct3D resources required to run.
@@ -75,6 +81,14 @@ void Game::Initialize(HWND window, int width, int height)
 
 	// マウスオブジェクト作成
 	mouseUtil = std::make_unique<MouseUtil>(window);
+
+	// サウンドファイル初期化
+	ADX2Le::Initialize("Resources/ADX2_samples.acf");
+	ADX2Le::LoadAcb("Resources/Basic.acb", "Resources/Basic.awb");
+	ADX2Le::Play(CRI_BASIC_MUSIC2);
+
+	// ゲームパッド
+	gamepad = std::make_unique<GamePad>();
 }
 
 // Executes the basic game loop.
@@ -92,6 +106,8 @@ void Game::Tick()
 void Game::Update(DX::StepTimer const& timer)
 {
     float elapsedTime = float(timer.GetElapsedSeconds());
+
+	ADX2Le::Update();
 
     // TODO: Add your game logic here.
     elapsedTime;
@@ -155,6 +171,17 @@ void Game::Update(DX::StepTimer const& timer)
 	{
 		debugText->AddText(SimpleMath::Vector2(10, 500), L"Right Button is Triggerd", 1.0f);
 	}
+
+	// ゲームパッド０の状態取得
+	GamePad::State state = gamepad->GetState(0);
+	if (state.IsConnected())
+	{
+
+	}
+
+	auto caps = gamepad->GetCapabilities(0);
+
+
 }
 
 // Draws the scene.

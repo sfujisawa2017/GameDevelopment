@@ -6,10 +6,12 @@
 
 #include <CommonStates.h>
 #include <Mouse.h>
+#include <GamePad.h>
 #include "StepTimer.h"
 #include "DebugText.h"
 #include "KeyboardUtil.h"
 #include "MouseUtil.h"
+#include "ADX2Le.h"
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -18,6 +20,8 @@ class Game
 public:
 
     Game();
+
+	virtual ~Game();
 
     // Initialization and management
     void Initialize(HWND window, int width, int height);
@@ -77,4 +81,7 @@ private:
 
 	DirectX::SimpleMath::Vector2 m_screenPos;
 	DirectX::SimpleMath::Vector2 m_origin;
+
+	std::unique_ptr<DirectX::GamePad> gamepad;
+
 };

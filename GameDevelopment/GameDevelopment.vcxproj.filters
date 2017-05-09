@@ -13,6 +13,7 @@
     <ClInclude Include="DebugText.h" />
     <ClInclude Include="KeyboardUtil.h" />
     <ClInclude Include="MouseUtil.h" />
+    <ClInclude Include="ADX2Le.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -21,6 +22,7 @@
     <ClCompile Include="DebugText.cpp" />
     <ClCompile Include="KeyboardUtil.cpp" />
     <ClCompile Include="MouseUtil.cpp" />
+    <ClCompile Include="ADX2Le.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
