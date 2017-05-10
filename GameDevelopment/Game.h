@@ -12,6 +12,7 @@
 #include "KeyboardUtil.h"
 #include "MouseUtil.h"
 #include "ADX2Le.h"
+#include "JoyPad.h"
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -83,5 +84,22 @@ private:
 	DirectX::SimpleMath::Vector2 m_origin;
 
 	std::unique_ptr<DirectX::GamePad> gamepad;
+	std::unique_ptr<DirectX::GamePad::ButtonStateTracker> gamepadTracker;
 
+	enum CTR_MODE
+	{
+		CTR_MODE_1,
+		CTR_MODE_2,
+	};
+
+	CTR_MODE ctrMode;
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_textureAttack;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_textureGuard;
+	DirectX::SimpleMath::Vector2 m_originAttack;
+	DirectX::SimpleMath::Vector2 m_originGuard;
+	bool m_attack;
+	bool m_guard;
+
+	std::unique_ptr<JoyPad> joyPad;
 };

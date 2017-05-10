@@ -89,6 +89,37 @@ void Game::Initialize(HWND window, int width, int height)
 
 	// ゲームパッド
 	gamepad = std::make_unique<GamePad>();
+	gamepadTracker = std::make_unique<GamePad::ButtonStateTracker>();
+
+	ctrMode = CTR_MODE_1;
+
+	DX::ThrowIfFailed(
+		CreateDDSTextureFromFile(m_d3dDevice.Get(), L"Resources/attack.dds",
+			resource.GetAddressOf(),
+			m_textureAttack.ReleaseAndGetAddressOf()));
+
+	ComPtr<ID3D11Texture2D> tex;
+	CD3D11_TEXTURE2D_DESC texDesc;
+
+	DX::ThrowIfFailed(resource.As(&tex));
+	tex->GetDesc(&texDesc);
+	m_originAttack.x = float(texDesc.Width / 2);
+	m_originAttack.y = float(texDesc.Height / 2);
+
+	DX::ThrowIfFailed(
+		CreateDDSTextureFromFile(m_d3dDevice.Get(), L"Resources/guard.dds",
+			resource.GetAddressOf(),
+			m_textureGuard.ReleaseAndGetAddressOf()));
+
+	DX::ThrowIfFailed(resource.As(&tex));
+	tex->GetDesc(&texDesc);
+	m_originGuard.x = float(texDesc.Width / 2);
+	m_originGuard.y = float(texDesc.Height / 2);
+
+	m_screenPos = Vector2(m_outputWidth/2.0f, m_outputHeight/2.0f);
+
+	joyPad = std::make_unique<JoyPad>();
+	joyPad->Initialize(m_window);
 }
 
 // Executes the basic game loop.
@@ -109,6 +140,8 @@ void Game::Update(DX::StepTimer const& timer)
 
 	ADX2Le::Update();
 
+	joyPad->Update();
+
     // TODO: Add your game logic here.
     elapsedTime;
 
@@ -117,71 +150,109 @@ void Game::Update(DX::StepTimer const& timer)
 	// マウス更新
 	mouseUtil->Update();
 
-	// ホイールクリック中は相対、それ以外なら絶対座標モードをセット
-	if (mouseUtil->IsPressed(MouseUtil::Button::Middle))
-	{
-		mouseUtil->SetMode(Mouse::Mode::MODE_RELATIVE);
-	}
-	else
-	{
-		mouseUtil->SetMode(Mouse::Mode::MODE_ABSOLUTE);
-	}
+	//// ホイールクリック中は相対、それ以外なら絶対座標モードをセット
+	//if (mouseUtil->IsPressed(MouseUtil::Button::Middle))
+	//{
+	//	mouseUtil->SetMode(Mouse::Mode::MODE_RELATIVE);
+	//}
+	//else
+	//{
+	//	mouseUtil->SetMode(Mouse::Mode::MODE_ABSOLUTE);
+	//}
 
-	// マウスモードの表示
-	if (mouseUtil->GetMode() == DirectX::Mouse::Mode::MODE_ABSOLUTE)
-	{
-		debugText->AddText(SimpleMath::Vector2(10, 100), L"Mouse Mode: Absolute");
-	}
-	else
-	{
-		debugText->AddText(SimpleMath::Vector2(10, 100), L"Mouse Mode: Relative");
-	}
+	//// マウスモードの表示
+	//if (mouseUtil->GetMode() == DirectX::Mouse::Mode::MODE_ABSOLUTE)
+	//{
+	//	debugText->AddText(SimpleMath::Vector2(10, 100), L"Mouse Mode: Absolute");
+	//}
+	//else
+	//{
+	//	debugText->AddText(SimpleMath::Vector2(10, 100), L"Mouse Mode: Relative");
+	//}
 
-	// マウス座標の表示
-	XMINT2 mousePos = mouseUtil->GetPos();
-	debugText->AddText(SimpleMath::Vector2(10, 200), L"Mouse X:%03d Y:%03d", mousePos.x, mousePos.y);
+	//// マウス座標の表示
+	//XMINT2 mousePos = mouseUtil->GetPos();
+	//debugText->AddText(SimpleMath::Vector2(10, 200), L"Mouse X:%03d Y:%03d", mousePos.x, mousePos.y);
 
-	// マウスボタン状態を表示
-	if (mouseUtil->IsPressed(MouseUtil::Button::Left))
-	{
-		debugText->AddText(SimpleMath::Vector2(10, 400), L"Left Button is Pushed", 1.0f);
-	}
+	//// マウスボタン状態を表示
+	//if (mouseUtil->IsPressed(MouseUtil::Button::Left))
+	//{
+	//	debugText->AddText(SimpleMath::Vector2(10, 400), L"Left Button is Pushed", 1.0f);
+	//}
 
-	if (mouseUtil->IsPressed(MouseUtil::Button::Middle))
-	{
-		debugText->AddText(SimpleMath::Vector2(10, 400), L"Middle Button is Pushed", 1.0f);
-	}
+	//if (mouseUtil->IsPressed(MouseUtil::Button::Middle))
+	//{
+	//	debugText->AddText(SimpleMath::Vector2(10, 400), L"Middle Button is Pushed", 1.0f);
+	//}
 
-	if (mouseUtil->IsPressed(MouseUtil::Button::Right))
-	{
-		debugText->AddText(SimpleMath::Vector2(10, 400), L"Right Button is Pushed", 1.0f);
-	}
+	//if (mouseUtil->IsPressed(MouseUtil::Button::Right))
+	//{
+	//	debugText->AddText(SimpleMath::Vector2(10, 400), L"Right Button is Pushed", 1.0f);
+	//}
 
-	if (mouseUtil->IsTriggered(MouseUtil::Button::Left))
-	{
-		debugText->AddText(SimpleMath::Vector2(10, 500), L"Left Button is Triggerd", 1.0f);
-	}
+	//if (mouseUtil->IsTriggered(MouseUtil::Button::Left))
+	//{
+	//	debugText->AddText(SimpleMath::Vector2(10, 500), L"Left Button is Triggerd", 1.0f);
+	//}
 
-	if (mouseUtil->IsTriggered(MouseUtil::Button::Middle))
-	{
-		debugText->AddText(SimpleMath::Vector2(10, 500), L"Middle Button is Triggerd", 1.0f);
-	}
+	//if (mouseUtil->IsTriggered(MouseUtil::Button::Middle))
+	//{
+	//	debugText->AddText(SimpleMath::Vector2(10, 500), L"Middle Button is Triggerd", 1.0f);
+	//}
 
-	if (mouseUtil->IsTriggered(MouseUtil::Button::Right))
-	{
-		debugText->AddText(SimpleMath::Vector2(10, 500), L"Right Button is Triggerd", 1.0f);
-	}
+	//if (mouseUtil->IsTriggered(MouseUtil::Button::Right))
+	//{
+	//	debugText->AddText(SimpleMath::Vector2(10, 500), L"Right Button is Triggerd", 1.0f);
+	//}
+
+	//m_screenPos = Vector2(mousePos.x, mousePos.y);
 
 	// ゲームパッド０の状態取得
 	GamePad::State state = gamepad->GetState(0);
 	if (state.IsConnected())
 	{
+		gamepadTracker->Update(state);
 
+		if (gamepadTracker->back == GamePad::ButtonStateTracker::PRESSED)
+		{
+			ctrMode = (CTR_MODE)(CTR_MODE_2 - ctrMode);
+		}
+
+		debugText->AddText(SimpleMath::Vector2(10, 400), L"Mode::%d", (int)(ctrMode+1));
 	}
 
 	auto caps = gamepad->GetCapabilities(0);
 
+	if (state.IsConnected())
+	{
+		bool* attack;
+		bool* guard;
 
+		switch (ctrMode)
+		{
+		case CTR_MODE_1:
+			attack = &state.buttons.a;
+			guard = &state.buttons.b;
+			break;
+		case CTR_MODE_2:
+			attack = &state.buttons.b;
+			guard = &state.buttons.a;
+			break;
+		}
+
+		m_attack = *attack;
+		m_guard = *guard;
+
+		if (m_attack)
+		{
+			debugText->AddText(SimpleMath::Vector2(10, 500), L"Attack");
+		}
+
+		if (m_guard)
+		{
+			debugText->AddText(SimpleMath::Vector2(10, 500), L"Guard");
+		}
+	}
 }
 
 // Draws the scene.
@@ -198,8 +269,19 @@ void Game::Render()
     // TODO: Add your rendering code here.
 	// スプライトの描画
 	m_spriteBatch->Begin(SpriteSortMode_Deferred, m_states->AlphaBlend());
-	m_spriteBatch->Draw(m_texture.Get(), m_screenPos, nullptr, Colors::White,
-		XM_PI, m_origin, 1.0f);
+	//m_spriteBatch->Draw(m_texture.Get(), m_screenPos, nullptr, Colors::White,
+	//	XM_PI, m_origin, 1.0f);
+
+	if (m_attack)
+	{
+		m_spriteBatch->Draw(m_textureAttack.Get(), m_screenPos, nullptr, Colors::White,
+			0.0f, m_originAttack, 1.0f);
+	}
+	if (m_guard)
+	{
+		m_spriteBatch->Draw(m_textureGuard.Get(), m_screenPos, nullptr, Colors::White,
+			0.0f, m_originGuard, 1.0f);
+	}
 	m_spriteBatch->End();
 
 	// デバッグ用文字表示

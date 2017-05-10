@@ -14,6 +14,7 @@
     <ClInclude Include="KeyboardUtil.h" />
     <ClInclude Include="MouseUtil.h" />
     <ClInclude Include="ADX2Le.h" />
+    <ClInclude Include="JoyPad.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -23,6 +24,7 @@
     <ClCompile Include="KeyboardUtil.cpp" />
     <ClCompile Include="MouseUtil.cpp" />
     <ClCompile Include="ADX2Le.cpp" />
+    <ClCompile Include="JoyPad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
@@ -42,6 +44,12 @@
       <Filter>Assets</Filter>
     </ImageContentTask>
     <ImageContentTask Include="Assets\cat.png">
+      <Filter>Assets</Filter>
+    </ImageContentTask>
+    <ImageContentTask Include="Assets\attack.png">
+      <Filter>Assets</Filter>
+    </ImageContentTask>
+    <ImageContentTask Include="Assets\guard.png">
       <Filter>Assets</Filter>
     </ImageContentTask>
   </ItemGroup>
